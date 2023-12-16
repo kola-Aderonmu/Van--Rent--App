@@ -371,6 +371,9 @@ i[class*="van-type-"] {
 
 .host-vans-title {
   padding-inline: 26px;
+  /* font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+  font-weight: 800;
+  text-decoration: line-through; */
 }
 
 .host-van-single {
@@ -740,3 +743,4 @@ img.graph {
   color: #ff8c38;
   margin-right: 5px;
 }
+
