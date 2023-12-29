@@ -1,5 +1,6 @@
 import React from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useLoaderData, useSearchParams } from "react-router-dom";
+import { getVans } from "../../api";
 
 // import { PiVanFill } from "react-icons/pi";
 
@@ -17,14 +18,34 @@ import { Link, useSearchParams } from "react-router-dom";
 export default function Vans() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [vans, setVans] = React.useState([]);
+  const [loading, setLoading] = React.useState(false);
+   const [error, setError] = React.useState(null);
+
+ const data = useLoaderData();
 
   const typeFilter = searchParams.get("type");
 
+
   React.useEffect(() => {
-    fetch("/api/vans")
-      .then((res) => res.json())
-      .then((data) => setVans(data.vans));
+    async function loadVans() {
+      setLoading(true)
+
+       try {
+         const data = await getVans();
+         setVans(data);
+       } catch (err) {
+         setError(err);
+       } finally {
+         setLoading(false);
+       }
+    }
+
+    loadVans();
   }, []);
+
+  function capitalize(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  }
 
   const displayVans = typeFilter
     ? vans.filter((van) => van.type === typeFilter)
@@ -38,7 +59,6 @@ export default function Vans() {
           search: `?${searchParams.toString()}`,
           type: capitalize(typeFilter),
         }}
-      
       >
         <img alt={van.name} src={van.imageUrl} />
         <div className="van-info">
@@ -53,10 +73,6 @@ export default function Vans() {
     </div>
   ));
 
-  function capitalize(str) {
-    return str.charAt(0).toUpperCase() + str.slice(1);
-  }
-
   function handleFilterChange(key, value) {
     setSearchParams((prevParams) => {
       if (value === null) {
@@ -67,6 +83,21 @@ export default function Vans() {
       return prevParams;
     });
   }
+
+  if (loading) {
+    return (
+      // <!-- Spinner Container -->
+      <div class="spinner-container">
+        {/* <!-- Spinner Animation --> */}
+        <div class="spinner"></div>
+      </div>
+    );
+  }
+
+   if (error) {
+     return <h1>There was an error: {error.message}</h1>;
+   }
+
 
   return (
     <div className="van-list-container">

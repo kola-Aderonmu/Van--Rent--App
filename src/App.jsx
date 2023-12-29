@@ -1,6 +1,12 @@
 import React from "react-dom/client";
 import ReactDOM from "react";
-import { BrowserRouter, Route, Routes, Link } from "react-router-dom";
+import { 
+  RouterProvider,
+  createBrowserRouter,
+  createRoutesFromElements, 
+  Route,
+  Link 
+} from "react-router-dom";
 import "./App.css";
 
 import About from "./coponents/pages/About.jsx";
@@ -28,12 +34,9 @@ import NotFound from "./coponents/pages/NotFound.jsx";
 
 //************************************** */
 
-function App() {
-  return (
-    <>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Layout />}>
+
+const router = createBrowserRouter(createRoutesFromElements(
+  <Route path="/" element={<Layout />}>
           
             <Route index element={<Home />} />
             <Route path="about" element={<About />} />
@@ -54,8 +57,15 @@ function App() {
             </Route>
               <Route path="*" element={<NotFound />} />
           </Route>
-        </Routes>
-      </BrowserRouter>
+))
+
+
+
+
+function App() {
+  return (
+    <>
+      <RouterProvider router={router} />
 
       {/* <Button variant="primary">Primary</Button>{' '}
       <Button variant="secondary">Secondary</Button>{' '}
