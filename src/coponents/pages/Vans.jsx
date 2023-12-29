@@ -3,7 +3,6 @@ import { Link, useSearchParams } from "react-router-dom";
 
 // import { PiVanFill } from "react-icons/pi";
 
-
 /**
  * {
  * id: "1",
@@ -16,11 +15,10 @@ import { Link, useSearchParams } from "react-router-dom";
  */
 
 export default function Vans() {
-  const [searchParams, setSearchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams();
   const [vans, setVans] = React.useState([]);
 
-const typeFilter = searchParams.get("type")
-
+  const typeFilter = searchParams.get("type");
 
   React.useEffect(() => {
     fetch("/api/vans")
@@ -28,14 +26,20 @@ const typeFilter = searchParams.get("type")
       .then((data) => setVans(data.vans));
   }, []);
 
-
   const displayVans = typeFilter
-  ? van.filter(van => van.type === typeFilter) 
-  : vans
+    ? vans.filter((van) => van.type === typeFilter)
+    : vans;
 
   const vanElements = displayVans.map((van) => (
     <div key={van.id} className="van-tile">
-      <Link to={`/vans/${van.id}`}>
+      <Link
+        to={van.id}
+        state={{
+          search: `?${searchParams.toString()}`,
+          type: capitalize(typeFilter),
+        }}
+      
+      >
         <img alt={van.name} src={van.imageUrl} />
         <div className="van-info">
           <h3>{van.name}</h3>
@@ -49,11 +53,68 @@ const typeFilter = searchParams.get("type")
     </div>
   ));
 
+  function capitalize(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  }
+
+  function handleFilterChange(key, value) {
+    setSearchParams((prevParams) => {
+      if (value === null) {
+        prevParams.delete(key);
+      } else {
+        prevParams.set(key, value);
+      }
+      return prevParams;
+    });
+  }
+
   return (
     <div className="van-list-container">
       <h1>Explore our van options</h1>
       <div className="van-list-filter-buttons">
-        <Link to="?type=simple" className="van-type simple">
+        <button
+          onClick={() => handleFilterChange("type", "simple")}
+          style={{ fontFamily: "monospace" }}
+          className={`van-type simple ${
+            typeFilter === "simple" ? "selected" : ""
+          }`}
+        >
+          Simple
+        </button>
+        <button
+          onClick={() => handleFilterChange("type", "luxury")}
+          style={{ fontFamily: "monospace" }}
+          className={`van-type luxury 
+                        ${typeFilter === "luxury" ? "selected" : ""}`}
+        >
+          Luxury
+        </button>
+        <button
+          onClick={() => handleFilterChange("type", "rugged")}
+          style={{ fontFamily: "monospace" }}
+          className={`van-type rugged 
+                        ${typeFilter === "rugged" ? "selected" : ""}`}
+        >
+          Rugged
+        </button>
+
+        {typeFilter ? (
+          <button
+            onClick={() => handleFilterChange("type", null)}
+            className="van-type.clear-filters"
+            style={{
+              fontFamily: "monospace",
+              border: "none",
+              borderRadius: "7px",
+              paddingLeft: "12px",
+              paddingRight: "12px",
+            }}
+          >
+            Clear filter
+          </button>
+        ) : null}
+
+        {/* <Link to="?type=simple" className="van-type simple">
           Simple
         </Link>
         <Link to="?type=luxury" className="van-type luxury">
@@ -64,7 +125,7 @@ const typeFilter = searchParams.get("type")
         </Link>
         <Link to="." className="van-type clear-filters">
           Clear filter
-        </Link>
+        </Link> */}
       </div>
       <div className="van-list">{vanElements}</div>
     </div>
