@@ -2,6 +2,7 @@ import React from "react";
 import { Link, useLoaderData, useSearchParams } from "react-router-dom";
 import { getVans } from "../../api";
 
+
 // import { PiVanFill } from "react-icons/pi";
 
 /**
@@ -15,33 +16,38 @@ import { getVans } from "../../api";
  * }
  */
 
+
+export function loader() {
+  return getVans();
+}
+
 export default function Vans() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [vans, setVans] = React.useState([]);
-  const [loading, setLoading] = React.useState(false);
+  // const [vans, setVans] = React.useState([]);
+  // const [loading, setLoading] = React.useState(false);
    const [error, setError] = React.useState(null);
 
- const data = useLoaderData();
+ const vans = useLoaderData();
 
   const typeFilter = searchParams.get("type");
 
 
-  React.useEffect(() => {
-    async function loadVans() {
-      setLoading(true)
+  // React.useEffect(() => {
+  //   async function loadVans() {
+  //     setLoading(true)
 
-       try {
-         const data = await getVans();
-         setVans(data);
-       } catch (err) {
-         setError(err);
-       } finally {
-         setLoading(false);
-       }
-    }
+  //      try {
+  //        const data = await getVans();
+  //        setVans(data);
+  //      } catch (err) {
+  //        setError(err);
+  //      } finally {
+  //        setLoading(false);
+  //      }
+  //   }
 
-    loadVans();
-  }, []);
+  //   loadVans();
+  // }, []);
 
   function capitalize(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
@@ -84,15 +90,17 @@ export default function Vans() {
     });
   }
 
-  if (loading) {
-    return (
-      // <!-- Spinner Container -->
-      <div class="spinner-container">
-        {/* <!-- Spinner Animation --> */}
-        <div class="spinner"></div>
-      </div>
-    );
-  }
+  // ***********loading state*************************************************************
+  
+  // if (loading) {
+  //   return (
+  //     // <!-- Spinner Container -->
+  //     <div class="spinner-container">
+  //       {/* <!-- Spinner Animation --> */}
+  //       <div class="spinner"></div>
+  //     </div>
+  //   );
+  // }
 
    if (error) {
      return <h1>There was an error: {error.message}</h1>;
